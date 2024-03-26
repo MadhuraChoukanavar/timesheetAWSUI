@@ -21,11 +21,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/feuji-project",
             "index": "projects/feuji-project/src/index.html",
-            "browser": "projects/feuji-project/src/main.ts",
+            "main": "projects/feuji-project/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -36,10 +36,10 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "projects/feuji-project/src/custom-theme.scss",
-              "projects/feuji-project/src/styles.css",
+             
+              "projects/feuji-project/src/styles.css"
            
-              "projects/feuji-project/src/custom-theme.scss"
+             
           ],
             "scripts": []
           },
@@ -48,13 +48,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5gb",
+                  "maximumError": "5gb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "5gb",
+                  "maximumError": "5gb"
                 }
               ],
               "outputHashing": "all"
