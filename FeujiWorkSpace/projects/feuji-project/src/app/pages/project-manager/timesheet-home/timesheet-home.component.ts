@@ -750,7 +750,7 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
   convertedDate: string = '';
   onSubmit() {
     const currentWeekStartDate = this.startDate;
-    const timesheetStatus = 58;
+    //const timesheetStatus = 58;
 
     const datePipe = new DatePipe('en-US');
 
@@ -763,35 +763,36 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
     if (!this.getWorkingHoursperWeek()) {
       Swal.fire({
         title: 'Are you sure?',
-        text: 'working hour is more than 40 hours do you want to submit',
+        text: 'working hour is more than 40 hours  do you want to submit',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
+          this.onSubmit1(this.currentUser, this.selectedAccount, formattedDatee);
         }
       });
     }
-    this.getWorkingHoursperWeekcall();
+  
   }
 
-  getWorkingHoursperWeekcall() {
-    if (!this.getWorkingHoursperWeek) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'working hour is less than 40 do you want to submit',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.onSubmit1(this.currentUser, this.selectedAccount, this.formattedDate);
-        }
-      });
-    }
-  }
+  // getWorkingHoursperWeekcall() {
+  //   if (!this.getWorkingHoursperWeek) {
+  //     Swal.fire({
+  //       title: 'Are you sure?',
+  //       text: 'working hour is less than 40 do you want to submit',
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonText: 'Yes',
+  //       cancelButtonText: 'No',
+  //     }).then((result) => {
+  //       if (result.isConfirmed) {
+          
+  //       }
+  //     });
+  //   }
+  // }
 
   onSubmit1(employeeId: number, accountId: number, weekStartDate: string) {
     this.timesheetHomeService
