@@ -56,6 +56,7 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
   addTaskRow() {
     this.showRows = true;
     this.addDataToAllarows();
+    this.saveAndSubmit = true;
 
     if (this.showRows && this.countofrow++ > 1) {
       this.rownum++;
@@ -133,7 +134,7 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
     this.columnsumnew();
   }
   onSelect(projects: any, i: number) {
-    this.saveAndSubmit = true;
+    //this.saveAndSubmit = true;
 
     this.selectedProjectId = projects.target.value;
     this.everyRowRecord[(this.rownum, 1)] = Number(this.selectedProjectId);
@@ -511,14 +512,21 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
       .subscribe((fetched) => {
         this.fetchedDetails = fetched as WeekAndDayDto[];
         this.limitRow = fetched.length;
-
+        console.log( this.fetchedDetails);
+        
         this.getHolidayDetails(this.startDate);
         this.disableInputField();
         this.countofrow = 1;
         for (let i = 0; i < this.fetchedDetails.length; i++) {
           this.selectedTasks[i] = this.fetchedDetails[i].taskId;
         }
+        if(this.fetchedDetails[0].timesheetStatusname==="Submitted")
+        {
+          this.saveAndSubmit=false;
+  
+        }
       });
+     
   }
 
   loadTimesheetData(): void {
@@ -571,7 +579,8 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
           hoursSat: selectedRowData.hoursSat,
           hoursSun: selectedRowData.hoursSun,
           comments: selectedRowData.comments,
-          timesheetStatus: 57,
+          timesheetStatus: 0,
+          timesheetStatusname:''
         };
 
         this.timesheetHomeService.deleteRecord(weekAndDayDto).subscribe(
@@ -596,51 +605,55 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
   convertedDate: string = '';
   onSubmit() {
     const currentWeekStartDate = this.startDate;
-    const timesheetStatus = 58;
-
+   
     const datePipe = new DatePipe('en-US');
 
     const formattedDatee: string = currentWeekStartDate
       ? datePipe.transform(currentWeekStartDate, 'yyyy-MM-dd HH:mm:ss') || ''
       : '';
 
-    if (!this.getWorkingHoursperWeek()) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'working hour is more than 40 hours do you want to submit',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-      }).then((result) => {
-        if (result.isConfirmed) {
-        }
-      });
-    }
-    this.getWorkingHoursperWeekcall();
-  }
+   
+      if((this.fetchedDetails[0].timesheetStatusname === 'Pending' || this.fetchedDetails[0].timesheetStatusname === 'Rejected'))
+      {
+    
+       
+        if (!this.getWorkingHoursperWeek()) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'working hour is more than 40 hours do you want to submit',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+             this.onSubmit1(
+              this.currentUser,
+              this.selectedAccount,
+            formattedDatee
+            );
+          }
+        });
+      }
+      }
+      else{
+        
+        
+        Swal.fire({
+        
+          text: 'timesheetalready submitted',
+          icon: 'warning',
+         confirmButtonText: 'OK'});
+      }
+     
 
-  getWorkingHoursperWeekcall() {
-    if (!this.getWorkingHoursperWeek) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'working hour is less than 40 do you want to submit',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.onSubmit1(
-            this.currentUser,
-            this.selectedAccount,
-            this.formattedDate
-          );
-        }
-      });
+     
     }
-  }
 
+  
+  
+
+ 
   onSubmit1(employeeId: number, accountId: number, weekStartDate: string) {
     this.timesheetHomeService
       .submitData(employeeId, accountId, weekStartDate)
@@ -686,7 +699,8 @@ export class TimesheetHomeComponent implements OnInit, AfterViewChecked {
     0,
     0,
     '',
-    0
+    0,
+    ''
   );
 
   editMode: boolean = false;
